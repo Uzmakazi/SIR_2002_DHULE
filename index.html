@@ -1,20 +1,103 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>🗳 2002 SIR Dhule</title>
+
+<style>
+
+body{
+  font-family: system-ui;
+  margin:0;
+  background:linear-gradient(135deg,#1d2671,#c33764);
+}
+
+.container{
+  max-width:700px;
+  margin:auto;
+  padding:12px;
+}
+
+.header{
+  color:white;
+  text-align:center;
+  margin-top:20px;
+}
+
+.card{
+  background:white;
+  padding:15px;
+  border-radius:14px;
+  margin-top:15px;
+}
+
+input,button{
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+  font-size:16px;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+
+button{
+  background:linear-gradient(90deg,#2193b0,#6dd5ed);
+  color:white;
+  font-weight:bold;
+  border:none;
+}
+
+.result{
+  background:#f7f7f7;
+  padding:12px;
+  margin-top:12px;
+  border-radius:10px;
+}
+
+.file{
+  font-size:12px;
+  color:#666;
+}
+
+mark{
+  background:yellow;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="header">
+<h2>🗳 2002 SIR Dhule</h2>
+मतदार यादी शोधा
+</div>
+
+<div class="card">
+
+<input id="q" placeholder=" आडनाव + स्वतःचे नाव ">
+
+<button onclick="search()">🔍 शोधा</button>
+
+<div id="count"></div>
+<div id="results"></div>
+
+</div>
+
+</div>
+
+<!-- ✅ SCRIPT AT BOTTOM (IMPORTANT) -->
 <script>
 
 let data=[];
 
-// 🔤 basic transliteration mapping
-const map = {
-  a:"अ", aa:"आ", i:"इ", ee:"ई", u:"उ", oo:"ऊ",
-  e:"ए", ai:"ऐ", o:"ओ", au:"औ",
-  k:"क", kh:"ख", g:"ग", gh:"घ",
-  ch:"च", j:"ज", zh:"झ",
-  t:"त", th:"थ", d:"द", dh:"ध",
-  n:"न", p:"प", ph:"फ", b:"ब", bh:"भ",
-  m:"म", y:"य", r:"र", l:"ल", v:"व",
-  s:"स", h:"ह"
-};
-
-// 🔁 normalize text (important)
+// ✅ normalize
 function normalize(str){
   return str.toLowerCase()
     .replace(/[^a-zअ-ह\s]/g,"")
@@ -22,48 +105,36 @@ function normalize(str){
     .trim();
 }
 
-// 🔤 English → rough Marathi conversion
+// ✅ simple transliteration
 function transliterate(word){
-  let w = word.toLowerCase();
-  let result = "";
-
-  for(let i=0;i<w.length;i++){
-    let two = w.substr(i,2);
-    if(map[two]){
-      result += map[two];
-      i++;
-    }else if(map[w[i]]){
-      result += map[w[i]];
-    }else{
-      result += w[i];
-    }
-  }
-
-  return result;
+  return word
+    .toLowerCase()
+    .replace(/q/g,"क")
+    .replace(/k/g,"क")
+    .replace(/z/g,"ज")
+    .replace(/f/g,"फ")
+    .replace(/d/g,"द")
+    .replace(/t/g,"त")
+    .replace(/m/g,"म")
+    .replace(/n/g,"न")
+    .replace(/a/g,"अ")
+    .replace(/e/g,"े")
+    .replace(/i/g,"ि")
+    .replace(/o/g,"ो")
+    .replace(/u/g,"ु");
 }
 
-// 🔍 Levenshtein distance (fuzzy match)
-function distance(a,b){
-  let m=[];
-  for(let i=0;i<=b.length;i++){m[i]=[i];}
-  for(let j=0;j<=a.length;j++){m[0][j]=j;}
+// ✅ simple fuzzy match
+function similar(a,b){
+  if(!a || !b) return false;
 
-  for(let i=1;i<=b.length;i++){
-    for(let j=1;j<=a.length;j++){
-      m[i][j]=b.charAt(i-1)==a.charAt(j-1)
-        ? m[i-1][j-1]
-        : Math.min(
-            m[i-1][j-1]+1,
-            m[i][j-1]+1,
-            m[i-1][j]+1
-          );
-    }
-  }
+  if(a.includes(b) || b.includes(a)) return true;
 
-  return m[b.length][a.length];
+  let diff = Math.abs(a.length - b.length);
+  return diff <= 2;
 }
 
-// 🎯 smart match
+// ✅ smart match
 function isMatch(text, query){
 
   text = normalize(text);
@@ -72,15 +143,13 @@ function isMatch(text, query){
   let words = query.split(" ");
 
   return words.every(qWord=>{
-    
-    let marathi = transliterate(qWord);
+
+    let mar = transliterate(qWord);
 
     return text.split(" ").some(tWord=>{
       return (
-        tWord.includes(qWord) ||
-        tWord.includes(marathi) ||
-        distance(tWord, qWord) <= 2 ||
-        distance(tWord, marathi) <= 2
+        similar(tWord,qWord) ||
+        similar(tWord,mar)
       );
     });
 
@@ -89,26 +158,41 @@ function isMatch(text, query){
 
 // 🎨 highlight
 function highlight(text,query){
-  let q = query.split(" ");
-  q.forEach(word=>{
-    let reg = new RegExp(word,"gi");
-    text = text.replace(reg, m=>`<mark>${m}</mark>`);
+  let words = query.split(" ");
+  words.forEach(w=>{
+    let reg = new RegExp(w,"gi");
+    text = text.replace(reg,"<mark>"+w+"</mark>");
   });
   return text;
 }
 
 // 📦 load data
 async function load(){
-  let r = await fetch("data.json");
-  data = await r.json();
-  document.getElementById("count")
-    .innerHTML="Total records: "+data.length;
+  try{
+    let r = await fetch("data.json");
+    data = await r.json();
+
+    let countEl = document.getElementById("count");
+
+    if(countEl){
+      countEl.innerHTML = "Total records: " + data.length;
+    }
+
+  }catch(e){
+    console.error("ERROR loading JSON:", e);
+    document.getElementById("count").innerHTML = "❌ data.json load error";
+  }
 }
 
-// 🔍 SEARCH
+// 🔍 search
 function search(){
 
   let q = document.getElementById("q").value;
+
+  if(!q){
+    document.getElementById("results").innerHTML="";
+    return;
+  }
 
   let html="";
   let total=0;
@@ -118,23 +202,25 @@ function search(){
     if(isMatch(r.text,q)){
       total++;
 
-      html+=`
+      html += `
       <div class="result">
         <div>${highlight(r.text,q)}</div>
         <div class="file">
           ${r.area} | ${r.file} (line ${r.line})
         </div>
-      </div>
-      `;
+      </div>`;
     }
 
   });
 
   document.getElementById("results").innerHTML=html;
-  document.getElementById("count")
-    .innerHTML="Found "+total+" results";
+  document.getElementById("count").innerHTML="Found "+total+" results";
 }
 
-load();
+// ✅ load after page ready
+document.addEventListener("DOMContentLoaded", load);
 
 </script>
+
+</body>
+</html>
