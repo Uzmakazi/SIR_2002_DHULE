@@ -1,211 +1,140 @@
-<!DOCTYPE html>
-<html lang="mr">
-
-<head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>🗳 2002 SIR Vadgaon</title>
-
-<style>
-
-body{
-font-family: system-ui;
-margin:0;
-background:linear-gradient(135deg,#1d2671,#c33764);
-}
-
-.container{
-max-width:700px;
-margin:auto;
-padding:12px;
-box-sizing:border-box;
-}
-
-.header{
-color:white;
-text-align:center;
-margin-top:20px;
-padding:0 10px;
-}
-
-.card{
-
-background:white;
-padding:15px;
-border-radius:14px;
-margin-top:15px;
-width:100%;
-box-sizing:border-box;
-
-}
-
-input,button{
-
-width:100%;
-padding:14px;
-margin-top:10px;
-font-size:16px;
-border-radius:10px;
-border:1px solid #ddd;
-box-sizing:border-box;
-
-}
-
-button{
-
-background:linear-gradient(90deg,#2193b0,#6dd5ed);
-color:white;
-font-weight:bold;
-border:none;
-
-}
-
-.result{
-
-background:#f7f7f7;
-padding:12px;
-margin-top:12px;
-border-radius:10px;
-
-}
-
-.file{
-
-font-size:12px;
-color:#666;
-
-}
-
-mark{
-
-background:yellow;
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="header">
-
-<h2>🗳 2002 SIR Vadgaon</h2>
-
-मतदार यादी शोधा
-
-</div>
-
-
-<div class="card">
-
-<input id="q"
-
-placeholder="नाव शोधा">
-
-
-<button onclick="search()">
-
-🔍 शोधा
-
-</button>
-
-
-<div id="count"></div>
-
-<div id="results"></div>
-
-</div>
-
-</div>
-
-
 <script>
 
 let data=[];
 
+// 🔤 basic transliteration mapping
+const map = {
+  a:"अ", aa:"आ", i:"इ", ee:"ई", u:"उ", oo:"ऊ",
+  e:"ए", ai:"ऐ", o:"ओ", au:"औ",
+  k:"क", kh:"ख", g:"ग", gh:"घ",
+  ch:"च", j:"ज", zh:"झ",
+  t:"त", th:"थ", d:"द", dh:"ध",
+  n:"न", p:"प", ph:"फ", b:"ब", bh:"भ",
+  m:"म", y:"य", r:"र", l:"ल", v:"व",
+  s:"स", h:"ह"
+};
+
+// 🔁 normalize text (important)
+function normalize(str){
+  return str.toLowerCase()
+    .replace(/[^a-zअ-ह\s]/g,"")
+    .replace(/\s+/g," ")
+    .trim();
+}
+
+// 🔤 English → rough Marathi conversion
+function transliterate(word){
+  let w = word.toLowerCase();
+  let result = "";
+
+  for(let i=0;i<w.length;i++){
+    let two = w.substr(i,2);
+    if(map[two]){
+      result += map[two];
+      i++;
+    }else if(map[w[i]]){
+      result += map[w[i]];
+    }else{
+      result += w[i];
+    }
+  }
+
+  return result;
+}
+
+// 🔍 Levenshtein distance (fuzzy match)
+function distance(a,b){
+  let m=[];
+  for(let i=0;i<=b.length;i++){m[i]=[i];}
+  for(let j=0;j<=a.length;j++){m[0][j]=j;}
+
+  for(let i=1;i<=b.length;i++){
+    for(let j=1;j<=a.length;j++){
+      m[i][j]=b.charAt(i-1)==a.charAt(j-1)
+        ? m[i-1][j-1]
+        : Math.min(
+            m[i-1][j-1]+1,
+            m[i][j-1]+1,
+            m[i-1][j]+1
+          );
+    }
+  }
+
+  return m[b.length][a.length];
+}
+
+// 🎯 smart match
+function isMatch(text, query){
+
+  text = normalize(text);
+  query = normalize(query);
+
+  let words = query.split(" ");
+
+  return words.every(qWord=>{
+    
+    let marathi = transliterate(qWord);
+
+    return text.split(" ").some(tWord=>{
+      return (
+        tWord.includes(qWord) ||
+        tWord.includes(marathi) ||
+        distance(tWord, qWord) <= 2 ||
+        distance(tWord, marathi) <= 2
+      );
+    });
+
+  });
+}
+
+// 🎨 highlight
+function highlight(text,query){
+  let q = query.split(" ");
+  q.forEach(word=>{
+    let reg = new RegExp(word,"gi");
+    text = text.replace(reg, m=>`<mark>${m}</mark>`);
+  });
+  return text;
+}
+
+// 📦 load data
 async function load(){
-
-let r=await fetch("data.json");
-
-data=await r.json();
-
-document.getElementById("count")
-
-.innerHTML="Total records: "+data.length;
-
+  let r = await fetch("data.json");
+  data = await r.json();
+  document.getElementById("count")
+    .innerHTML="Total records: "+data.length;
 }
 
-
-function highlight(text,word){
-
-return text.replaceAll(
-
-word,
-
-"<mark>"+word+"</mark>"
-
-);
-
-}
-
-
+// 🔍 SEARCH
 function search(){
 
-let q=document.getElementById("q")
+  let q = document.getElementById("q").value;
 
-.value.toLowerCase();
+  let html="";
+  let total=0;
 
-let html="";
+  data.forEach(r=>{
 
-let total=0;
+    if(isMatch(r.text,q)){
+      total++;
 
-data.forEach(r=>{
+      html+=`
+      <div class="result">
+        <div>${highlight(r.text,q)}</div>
+        <div class="file">
+          ${r.area} | ${r.file} (line ${r.line})
+        </div>
+      </div>
+      `;
+    }
 
-if(r.text.toLowerCase().includes(q)){
+  });
 
-total++;
-
-html+=`
-
-<div class="result">
-
-<div>${highlight(r.text,q)}</div>
-
-<div class="file">
-
-${r.area} | ${r.file} (line ${r.line})
-
-</div>
-
-</div>
-
-`;
-
+  document.getElementById("results").innerHTML=html;
+  document.getElementById("count")
+    .innerHTML="Found "+total+" results";
 }
-
-});
-
-
-document.getElementById("results")
-
-.innerHTML=html;
-
-document.getElementById("count")
-
-.innerHTML="Found "+total+" results";
-
-}
-
 
 load();
 
 </script>
-
-</body>
-
-</html>
