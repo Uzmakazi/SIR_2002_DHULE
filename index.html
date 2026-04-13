@@ -16,10 +16,7 @@ body {
 .header { color: white; text-align: center; margin-top: 20px; padding: 0 10px; }
 .header h2 { margin-bottom: 4px; }
 .card { background: white; padding: 15px; border-radius: 14px; margin-top: 15px; width: 100%; }
-input {
-  width: 100%; padding: 14px; margin-top: 10px; font-size: 16px;
-  border-radius: 10px; border: 1px solid #ddd;
-}
+input { width: 100%; padding: 14px; margin-top: 10px; font-size: 16px; border-radius: 10px; border: 1px solid #ddd; }
 button {
   width: 100%; padding: 14px; margin-top: 10px; font-size: 16px;
   border-radius: 10px; border: none;
@@ -27,12 +24,9 @@ button {
   color: white; font-weight: bold; cursor: pointer;
 }
 button:hover { opacity: 0.9; }
-.hint { font-size: 12px; color: #888; margin-top: 8px; text-align: center; line-height: 1.6; }
+.hint { font-size: 12px; color: #888; margin-top: 8px; text-align: center; line-height: 1.8; }
 #count { font-weight: bold; margin-top: 12px; color: #333; min-height: 20px; }
-.result {
-  background: #f7f7f7; padding: 12px; margin-top: 10px;
-  border-radius: 10px; border-left: 4px solid #27ae60;
-}
+.result { background: #f7f7f7; padding: 12px; margin-top: 10px; border-radius: 10px; border-left: 4px solid #27ae60; }
 .result.phonetic { border-left-color: #e67e22; background: #fffaf4; }
 .badge { font-size: 11px; color: #555; margin-bottom: 4px; font-weight: bold; }
 .text-line { font-size: 15px; line-height: 1.7; }
@@ -43,14 +37,15 @@ mark { background: #ffe066; border-radius: 2px; padding: 0 1px; }
 <body>
 <div class="container">
   <div class="header">
-    <h2>🗳 2002 SIR Dhule </h2>
+    <h2>🗳 2002 SIR Dhule</h2>
     मतदार यादी शोधा
   </div>
   <div class="card">
     <input id="q" placeholder="नाव शोधा — Roman or मराठी दोन्ही चालतात">
     <button onclick="search()">🔍 शोधा / Search</button>
     <div class="hint">
-      💡 Kazi = Qazi = काजी &nbsp;|&nbsp; Ahmad = Ahmed = अहमद &nbsp;|&nbsp; राशिद = रशीद
+      💡 विनोद = वीनोद &nbsp;|&nbsp; रमेश = रामेश &nbsp;|&nbsp;
+      Kazi = Qazi = काजी &nbsp;|&nbsp; Ahmad = Ahmed = अहमद
     </div>
     <div id="count"></div>
     <div id="results"></div>
@@ -58,44 +53,85 @@ mark { background: #ffe066; border-radius: 2px; padding: 0 1px; }
 </div>
 
 <script>
-// ─────────────────────────────────────────────────────────────
-//  DEVANAGARI → ROMAN
-// ─────────────────────────────────────────────────────────────
-const DEVA_MAP = {
-  'क':'k','ख':'kh','ग':'g','घ':'gh','ङ':'ng',
-  'च':'ch','छ':'chh','ज':'j','झ':'jh','ञ':'ny',
-  'ट':'t','ठ':'th','ड':'d','ढ':'dh','ण':'n',
-  'त':'t','थ':'th','द':'d','ध':'dh','न':'n',
-  'प':'p','फ':'ph','ब':'b','भ':'bh','म':'m',
-  'य':'y','र':'r','ल':'l','व':'v',
-  'श':'sh','ष':'sh','स':'s','ह':'h',
-  'ळ':'l','ऱ':'r',
-  'अ':'a','आ':'aa','इ':'i','ई':'i','उ':'u','ऊ':'u',
-  'ए':'e','ऐ':'e','ओ':'o','औ':'o','ऋ':'ri',
-  'ा':'a','ि':'i','ी':'i','ु':'u','ू':'u',
-  'े':'e','ै':'e','ो':'o','ौ':'o','ृ':'ri',
-  '्':'','ं':'n','ः':'h','ँ':'n','़':'',
-  '०':'0','१':'1','२':'2','३':'3','४':'4',
-  '५':'5','६':'6','७':'7','८':'8','९':'9',
-};
+// ═══════════════════════════════════════════════════
+// STEP 1 — DEVANAGARI VOWEL PAIR NORMALISATION
+// Collapse each long/short pair → short form.
+// This runs BEFORE Roman conversion so both
+// विनोद and वीनोद become identical strings.
+//
+// Pairs:  अ↔आ  इ↔ई  उ↔ऊ  ए↔ऐ  ओ↔औ
+// ═══════════════════════════════════════════════════
+function normalizeDevaVowels(str) {
+  return str
+    .replace(/\u0906/g, '\u0905')  // आ → अ
+    .replace(/\u0908/g, '\u0907')  // ई → इ
+    .replace(/\u090A/g, '\u0909')  // ऊ → उ
+    .replace(/\u0910/g, '\u090F')  // ऐ → ए
+    .replace(/\u0914/g, '\u0913')  // औ → ओ
+    .replace(/\u0940/g, '\u093F')  // ी → ि
+    .replace(/\u0942/g, '\u0941')  // ू → ु
+    .replace(/\u0948/g, '\u0947')  // ै → े
+    .replace(/\u094C/g, '\u094B'); // ौ → ो
+}
 
+// ═══════════════════════════════════════════════════
+// STEP 2 — DEVANAGARI → ROMAN
+// ═══════════════════════════════════════════════════
+const DEVA_MAP = {
+  '\u0915':'k','\u0916':'kh','\u0917':'g','\u0918':'gh','\u0919':'ng',
+  '\u091A':'ch','\u091B':'chh','\u091C':'j','\u091D':'jh','\u091E':'ny',
+  '\u091F':'t','\u0920':'th','\u0921':'d','\u0922':'dh','\u0923':'n',
+  '\u0924':'t','\u0925':'th','\u0926':'d','\u0927':'dh','\u0928':'n',
+  '\u092A':'p','\u092B':'ph','\u092C':'b','\u092D':'bh','\u092E':'m',
+  '\u092F':'y','\u0930':'r','\u0932':'l','\u0935':'v',
+  '\u0936':'sh','\u0937':'sh','\u0938':'s','\u0939':'h',
+  '\u0933':'l','\u0931':'r',
+  '\u0905':'a','\u0907':'i','\u0909':'u','\u090F':'e','\u0913':'o','\u090B':'ri',
+  '\u093E':'a','\u093F':'i','\u0941':'u','\u0947':'e','\u094B':'o','\u0943':'ri',
+  '\u094D':'','\u0902':'n','\u0903':'h','\u0901':'n','\u093C':'',
+  '\u0966':'0','\u0967':'1','\u0968':'2','\u0969':'3','\u096A':'4',
+  '\u096B':'5','\u096C':'6','\u096D':'7','\u096E':'8','\u096F':'9',
+};
 function devaToRoman(str) {
   let out = '';
-  for (const ch of str) out += (DEVA_MAP[ch] ?? ch);
+  for (const ch of str) out += (DEVA_MAP[ch] !== undefined ? DEVA_MAP[ch] : ch);
   return out;
 }
 
-// ─────────────────────────────────────────────────────────────
-//  PHONETIC KEY  → pure consonant skeleton
-//
-//  Ahmad / Ahmed / Ahemad / अहमद  → all produce "hmd"
-//  राशिद / रशीद                  → both produce "rsd"
-//  Kazi / Qazi / काजी             → all produce "kj"
-// ─────────────────────────────────────────────────────────────
-function phoneticKey(word) {
-  let s = devaToRoman(word.toLowerCase());
+// ═══════════════════════════════════════════════════
+// STEP 3 — ROMAN VOWEL NORMALISATION
+// aa→a  ee/ii→i  oo/uu→u  ai/ei→e  au/ou→o
+// So "Raamesh" = "Ramesh", "Veenod" = "Vinod"
+// ═══════════════════════════════════════════════════
+function normalizeRomanVowels(str) {
+  return str
+    .replace(/aa/g,'a')
+    .replace(/ee|ii/g,'i')
+    .replace(/oo|uu/g,'u')
+    .replace(/ai|ei/g,'e')
+    .replace(/au|ou/g,'o');
+}
 
-  // Normalise consonant clusters (longest patterns first)
+// ═══════════════════════════════════════════════════
+// FULL NORMALISE — combines all 3 steps above
+// Produces a clean Roman string with short vowels only
+// ═══════════════════════════════════════════════════
+function fullNormalize(str) {
+  const dv = normalizeDevaVowels(str.toLowerCase());
+  const rm = devaToRoman(dv);
+  return normalizeRomanVowels(rm);
+}
+
+// ═══════════════════════════════════════════════════
+// PHONETIC KEY — consonant-only skeleton
+//
+// Threshold (no false positives for short names):
+//   len ≤ 3  → 0 edits  (exact; short skeletons fragile)
+//   len 4–6  → 1 edit
+//   len 7+   → 2 edits
+// ═══════════════════════════════════════════════════
+function phoneticKey(word) {
+  let s = fullNormalize(word);
   s = s
     .replace(/chh/g,'c').replace(/ch/g,'c')
     .replace(/kh/g,'k') .replace(/gh/g,'g')
@@ -103,107 +139,117 @@ function phoneticKey(word) {
     .replace(/dh/g,'d') .replace(/th/g,'t')
     .replace(/sh/g,'s') .replace(/ng/g,'n')
     .replace(/ny/g,'n') .replace(/ri/g,'r')
-    .replace(/q/g,'k')   // Qazi = Kazi
-    .replace(/z/g,'j')   // Rashid = Rasheed = Rashiid
-    .replace(/x/g,'ks')
-    .replace(/w/g,'v');
-
-  s = s.replace(/[aeiou]/g, '');  // strip all vowels
-  s = s.replace(/[^a-z]/g, '');   // keep only a-z
-  s = s.replace(/(.)\1+/g, '$1'); // collapse runs: ddn → dn
-
+    .replace(/q/g,'k').replace(/z/g,'j')
+    .replace(/x/g,'ks').replace(/w/g,'v');
+  s = s.replace(/[aeiou]/g,'');
+  s = s.replace(/[^a-z]/g,'');
+  s = s.replace(/(.)\1+/g,'$1');
   return s;
 }
 
-// ─────────────────────────────────────────────────────────────
-//  THRESHOLD  ← THE CRITICAL FIX
-//
-//  OLD (buggy): len < 6 → 1   ← gave threshold=1 for 3-char
-//               keys, so rjs~rms~rjn (राजेश matched रमेश, रजनी!)
-//
-//  NEW (correct):
-//    len ≤ 3  → 0   exact only (short skeletons are fragile)
-//    len 4–6  → 1   one consonant may differ
-//    len 7+   → 2   two consonants may differ (long compound names)
-//
-//  Verification:
-//    राजेश→"rjs"(3)  vs रमेश→"rms"  dist=1  thresh=0 → NO MATCH ✅
-//    राजेश→"rjs"(3)  vs रजनी→"rjn"  dist=1  thresh=0 → NO MATCH ✅
-//    राजेश→"rjs"(3)  vs राजु→"rj"   dist=1  thresh=0 → NO MATCH ✅
-//    Ahmad→"hmd"(3)  vs Ahmed→"hmd"  dist=0  thresh=0 → MATCH    ✅
-//    Mumtazoddin→"mtjdn"(5) vs Mumvajoddin→"mvjdn" dist=1 thresh=1→MATCH ✅
-// ─────────────────────────────────────────────────────────────
-function allowedEdits(keyLen) {
-  if (keyLen <= 3) return 0;
-  if (keyLen <= 6) return 1;
+function allowedEdits(len) {
+  if (len <= 3) return 0;
+  if (len <= 6) return 1;
   return 2;
 }
 
-// ─────────────────────────────────────────────────────────────
-//  LEVENSHTEIN DISTANCE
-// ─────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+// LEVENSHTEIN
+// ═══════════════════════════════════════════════════
 function levenshtein(a, b) {
   if (a === b) return 0;
   if (!a.length) return b.length;
   if (!b.length) return a.length;
-  let prev = Array.from({length: b.length + 1}, (_, j) => j);
+  let prev = Array.from({length: b.length+1}, (_,j) => j);
   for (let i = 1; i <= a.length; i++) {
     const curr = [i];
     for (let j = 1; j <= b.length; j++) {
-      curr[j] = a[i-1] === b[j-1]
-        ? prev[j-1]
-        : 1 + Math.min(prev[j], curr[j-1], prev[j-1]);
+      curr[j] = a[i-1]===b[j-1] ? prev[j-1] : 1+Math.min(prev[j],curr[j-1],prev[j-1]);
     }
     prev = curr;
   }
   return prev[b.length];
 }
 
-// ─────────────────────────────────────────────────────────────
-//  TOKEN MATCHER
-//  Does query key qK match any word key in the record?
-//  Length-difference guard: skip record keys that are too
-//  different in length to ever match within the threshold.
-// ─────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+// TOKEN MATCH — does query key match any record word?
+// ═══════════════════════════════════════════════════
 function tokenMatches(qK, recKeys) {
   if (!qK) return true;
   const thresh = allowedEdits(qK.length);
   for (const rk of recKeys) {
     if (!rk) continue;
-    if (Math.abs(qK.length - rk.length) > thresh) continue; // fast skip
+    if (Math.abs(qK.length - rk.length) > thresh) continue;
     if (levenshtein(qK, rk) <= thresh) return true;
   }
   return false;
 }
 
-// ─────────────────────────────────────────────────────────────
-//  HIGHLIGHT
-// ─────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+// LONG-NAME SKELETON MATCH
+//
+// Fixes compound-name failures where token boundaries
+// differ or extra words exist in the record.
+//
+// Approach: concatenate all token keys into one skeleton
+// and slide it over the record's concatenated skeleton.
+// If the query skeleton fits as a substring (or nearly),
+// it's a match — regardless of word-boundary positions.
+//
+// Example:
+//   Query  "Kazi Shoebuddin" → keys kj+sbdn → "kjsbdn"
+//   Record "काजी शेईबुद्दीन मुमवाजोद्दीन"
+//          → kj+sbdn+mvjdn  → "kjsbdnmvjdn"
+//   "kjsbdn" found in "kjsbdnmvjdn" → ✅ MATCH
+// ═══════════════════════════════════════════════════
+function longNameMatch(qKeys, recKeys) {
+  if (qKeys.length < 2) return false;
+  const qSkel = qKeys.join('');
+  const rSkel = recKeys.join('');
+  if (!qSkel || qSkel.length < 4) return false;
+
+  // Direct containment
+  if (rSkel.includes(qSkel)) return true;
+
+  // Sliding window with edits
+  const wLen   = qSkel.length;
+  const thresh = allowedEdits(wLen);
+  if (rSkel.length >= wLen) {
+    for (let i = 0; i <= rSkel.length - wLen; i++) {
+      if (levenshtein(qSkel, rSkel.slice(i, i + wLen)) <= thresh) return true;
+    }
+  } else {
+    if (levenshtein(qSkel, rSkel) <= allowedEdits(rSkel.length)) return true;
+  }
+  return false;
+}
+
+// ═══════════════════════════════════════════════════
+// HIGHLIGHT
+// ═══════════════════════════════════════════════════
 function highlight(text, terms) {
   let out = text;
   for (const t of terms) {
     if (!t || t.length < 2) continue;
-    const re = new RegExp(t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi');
-    out = out.replace(re, '<mark>$&</mark>');
+    const re = new RegExp(t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');
+    out = out.replace(re,'<mark>$&</mark>');
   }
   return out;
 }
 
-// ─────────────────────────────────────────────────────────────
-//  SEARCH
-// ─────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+// MAIN SEARCH
+// ═══════════════════════════════════════════════════
 let data = [];
 
 function search() {
   const raw = document.getElementById("q").value.trim();
   if (!raw) return;
 
-  const qTokens    = raw.toLowerCase().split(/\s+/).filter(Boolean);
-  const qKeys      = qTokens.map(phoneticKey);
-  const qRomTokens = qTokens.map(t => devaToRoman(t));
-
-  // At least one key must be non-trivial (≥ 2 chars) to run phonetic search
-  const hasSubstantialKey = qKeys.some(k => k.length >= 2);
+  const qTokens      = raw.toLowerCase().split(/\s+/).filter(Boolean);
+  const qNormTokens  = qTokens.map(t => fullNormalize(t));
+  const qKeys        = qTokens.map(phoneticKey);
+  const hasKey       = qKeys.some(k => k.length >= 2);
 
   const exactList    = [];
   const phoneticList = [];
@@ -212,48 +258,53 @@ function search() {
     const text    = rec.text || '';
     const textLow = text.toLowerCase();
 
-    // Layer 1: direct substring in original script
+    // Layer 1: exact substring
     if (qTokens.every(t => textLow.includes(t))) {
       exactList.push({ rec, text });
       return;
     }
 
-    // Precompute record word keys
+    const textNorm = fullNormalize(textLow);
     const recWords = textLow.split(/\s+/).filter(Boolean);
     const recKeys  = recWords.map(phoneticKey);
-    const textRom  = devaToRoman(textLow);
 
-    // Layer 2: romanised cross-script substring
-    if (qRomTokens.every(rt => rt.length > 1 && textRom.includes(rt))) {
-      phoneticList.push({ rec, text, badge: '🔤 Script match' });
+    // Layer 2: vowel-normalised cross-script substring
+    // विनोद finds वीनोद, रमेश finds रामेश, Veenod finds वीनोद
+    if (qNormTokens.every(nt => nt.length > 1 && textNorm.includes(nt))) {
+      phoneticList.push({ rec, text, badge: '🔤 Vowel / Script match' });
       return;
     }
 
-    // Layer 3: phonetic / fuzzy — every query token must match some record word
-    if (hasSubstantialKey && qKeys.every(qk => tokenMatches(qk, recKeys))) {
-      phoneticList.push({ rec, text, badge: '🔀 Phonetic / Fuzzy match' });
+    if (!hasKey) return;
+
+    // Layer 3a: token-by-token phonetic match
+    if (qKeys.every(qk => tokenMatches(qk, recKeys))) {
+      phoneticList.push({ rec, text, badge: '🔀 Phonetic match' });
+      return;
+    }
+
+    // Layer 3b: long compound-name skeleton match
+    if (longNameMatch(qKeys, recKeys)) {
+      phoneticList.push({ rec, text, badge: '🔀 Phonetic match (compound name)' });
     }
   });
 
-  // Render
   let html = '';
 
   exactList.forEach(({ rec, text }) => {
-    html += `
-      <div class="result">
-        <div class="badge">✅ Exact match</div>
-        <div class="text-line">${highlight(text, qTokens)}</div>
-        <div class="file">${rec.area} | ${rec.file} (line ${rec.line})</div>
-      </div>`;
+    html += `<div class="result">
+      <div class="badge">✅ Exact match</div>
+      <div class="text-line">${highlight(text, qTokens)}</div>
+      <div class="file">${rec.area} | ${rec.file} (line ${rec.line})</div>
+    </div>`;
   });
 
   phoneticList.forEach(({ rec, text, badge }) => {
-    html += `
-      <div class="result phonetic">
-        <div class="badge">${badge}</div>
-        <div class="text-line">${text}</div>
-        <div class="file">${rec.area} | ${rec.file} (line ${rec.line})</div>
-      </div>`;
+    html += `<div class="result phonetic">
+      <div class="badge">${badge}</div>
+      <div class="text-line">${text}</div>
+      <div class="file">${rec.area} | ${rec.file} (line ${rec.line})</div>
+    </div>`;
   });
 
   const total = exactList.length + phoneticList.length;
@@ -264,9 +315,9 @@ function search() {
      </p>`;
 
   document.getElementById("count").innerHTML =
-    `Found <b>${total}</b> result${total !== 1 ? 's' : ''}
-     (${exactList.length} exact, ${phoneticList.length} phonetic)
-     for "<i>${raw}</i>"`;
+    `Found <b>${total}</b> result${total!==1?'s':''}
+     — ${exactList.length} exact, ${phoneticList.length} phonetic
+     — for "<i>${raw}</i>"`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -275,18 +326,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// ─────────────────────────────────────────────────────────────
-//  LOAD DATA
-// ─────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+// LOAD  (no "Total records" shown)
+// ═══════════════════════════════════════════════════
 async function load() {
   try {
     const r = await fetch("data.json");
     data = await r.json();
-    document.getElementById("count").innerHTML =
-      "Total records: <b>" + data.length + "</b>";
   } catch {
     document.getElementById("count").innerHTML =
-      "⚠️ data.json not found — place it in the same folder as this HTML file.";
+      "⚠️ data.json not found — place it in the same folder as this file.";
   }
 }
 load();
