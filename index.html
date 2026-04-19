@@ -6,35 +6,28 @@
 <title>🗳 मतदार यादी 2002 — SIR Dhule</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
   background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
   min-height: 100vh;
   padding: 20px 12px 40px;
 }
-
-/* ── HEADER ── */
 .header { text-align: center; color: #fff; margin-bottom: 28px; }
 .header .badge {
   display: inline-block;
   background: rgba(255,255,255,0.1);
   border: 1px solid rgba(255,255,255,0.2);
-  color: #c9d6ff;
-  font-size: 11px; font-weight: 600;
+  color: #c9d6ff; font-size: 11px; font-weight: 600;
   letter-spacing: 2px; text-transform: uppercase;
   padding: 5px 14px; border-radius: 20px; margin-bottom: 14px;
 }
 .header h1 {
-  font-size: clamp(22px, 5vw, 34px);
-  font-weight: 800;
+  font-size: clamp(22px, 5vw, 34px); font-weight: 800;
   background: linear-gradient(90deg, #c9d6ff, #e2a4f3, #f9c8a1);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text; margin-bottom: 6px;
 }
 .header p { font-size: 14px; color: rgba(255,255,255,0.5); }
-
-/* ── CARD ── */
 .card {
   max-width: 680px; margin: 0 auto 24px;
   background: rgba(255,255,255,0.06);
@@ -42,8 +35,6 @@ body {
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 20px; padding: 24px;
 }
-
-/* ── SEARCH BAR ── */
 .search-wrap { display: flex; gap: 10px; align-items: stretch; }
 .search-wrap input {
   flex: 1; padding: 14px 18px; font-size: 16px;
@@ -57,14 +48,12 @@ body {
   background: rgba(255,255,255,0.12);
 }
 .search-wrap button {
-  padding: 14px 22px; font-size: 18px; border-radius: 12px;
-  border: none; background: linear-gradient(135deg, #667eea, #764ba2);
+  padding: 14px 22px; font-size: 18px; border-radius: 12px; border: none;
+  background: linear-gradient(135deg, #667eea, #764ba2);
   color: white; cursor: pointer; transition: opacity 0.2s, transform 0.1s; flex-shrink: 0;
 }
 .search-wrap button:hover { opacity: 0.88; }
 .search-wrap button:active { transform: scale(0.96); }
-
-/* ── INSTRUCTION BOX ── */
 .instruction {
   margin-top: 16px;
   background: rgba(255,200,100,0.08);
@@ -78,8 +67,6 @@ body {
 .instruction-text .example { margin-top: 6px; font-size: 12px; color: rgba(255,220,130,0.65); }
 .instruction-text .example span { color: #86efac; font-weight: 600; }
 .instruction-text .example .wrong { color: #fca5a5; text-decoration: line-through; }
-
-/* ── TIPS ── */
 .tips { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }
 .tip {
   font-size: 11px; color: rgba(255,255,255,0.45);
@@ -87,8 +74,6 @@ body {
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 20px; padding: 4px 12px;
 }
-
-/* ── STATUS ── */
 #status {
   max-width: 680px; margin: 0 auto 16px;
   font-size: 13px; color: rgba(255,255,255,0.5);
@@ -97,10 +82,7 @@ body {
 #status b { color: #c9d6ff; }
 #status i { color: rgba(255,255,255,0.7); }
 #status.warn { color: #fca5a5; }
-
-/* ── RESULTS ── */
 .results-wrap { max-width: 680px; margin: 0 auto; }
-
 .result-card {
   background: rgba(255,255,255,0.05);
   border: 1px solid rgba(255,255,255,0.1);
@@ -110,7 +92,6 @@ body {
 .result-card:hover { transform: translateY(-1px); border-color: rgba(201,214,255,0.25); }
 .result-card.exact { border-left: 3px solid #4ade80; }
 .result-card.fuzzy { border-left: 3px solid #fb923c; }
-
 .meta-strip {
   display: flex; gap: 8px; padding: 10px 14px 0;
   flex-wrap: wrap; align-items: center;
@@ -129,33 +110,28 @@ body {
 .meta-pill.ac   .value { color: #86efac; }
 .meta-pill.part .value { color: #fde68a; }
 .meta-pill.sr   .value { color: #f9a8d4; }
-
 .match-badge {
   margin-left: auto; font-size: 10px; font-weight: 700;
   letter-spacing: 0.5px; padding: 3px 9px; border-radius: 6px;
 }
 .exact .match-badge { background: rgba(74,222,128,0.15); color: #4ade80; }
-.fuzzy .match-badge { background: rgba(251,146,60,0.15);  color: #fb923c; }
-
+.fuzzy .match-badge { background: rgba(251,146,60,0.15); color: #fb923c; }
 .name-line {
   padding: 10px 14px 12px; font-size: 15px;
   color: rgba(255,255,255,0.88); line-height: 1.7; word-break: break-word;
 }
 mark { background: rgba(255,224,100,0.3); color: #ffe064; border-radius: 3px; padding: 0 2px; }
-
 .empty { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.3); }
 .empty .icon { font-size: 40px; margin-bottom: 10px; }
 .empty p { font-size: 14px; }
 </style>
 </head>
 <body>
-
 <div class="header">
   <div class="badge">Maharashtra Electoral Roll</div>
   <h1>🗳 मतदार यादी 2002</h1>
   <p>SIR Dhule — मतदाराचे नाव शोधा</p>
 </div>
-
 <div class="card">
   <div class="search-wrap">
     <input id="q" placeholder="इथे नाव टाका… उदा. राजेश पाटील"
@@ -168,8 +144,8 @@ mark { background: rgba(255,224,100,0.3); color: #ffe064; border-radius: 3px; pa
       <strong>फक्त मराठी भाषेत नाव टाका (देवनागरी लिपी)</strong><br>
       नाव शोधताना मराठी अक्षरातच टाइप करा.
       <div class="example">
-        ✅ बरोबर: <span>राजेश पाटील</span> &nbsp;|&nbsp; <span>विनोद कदम</span><br>
-        ❌ चुकीचे: <span class="wrong">Rajesh Patil</span> &nbsp;|&nbsp; <span class="wrong">Vinod Kadam</span>
+        ✅ बरोबर: <span>राजेश पाटील</span> &nbsp;|&nbsp; <span>मुमताजुद्दीन</span><br>
+        ❌ चुकीचे: <span class="wrong">Rajesh Patil</span> &nbsp;|&nbsp; <span class="wrong">Mumtajuddin</span>
       </div>
     </div>
   </div>
@@ -180,62 +156,55 @@ mark { background: rgba(255,224,100,0.3); color: #ffe064; border-radius: 3px; pa
     <span class="tip">उ = ऊ शोधतो</span>
   </div>
 </div>
-
 <div id="status"></div>
 <div class="results-wrap" id="results"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-//  DEVANAGARI UNICODE RANGES
-//  U+0900–U+097F  = Devanagari block
-//  We check that the query contains at least one Devanagari char.
-//  If not → reject immediately with a friendly warning.
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// GUARD — reject non-Devanagari input
+// ═══════════════════════════════════════════════════════
 function hasDevanagari(str) {
   return /[\u0900-\u097F]/.test(str);
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  STEP 1 — DEVANAGARI VOWEL PAIR NORMALISATION
-//  Only इ↔ई and उ↔ऊ as requested.
-//  Both the query AND the record text are normalised the same way
-//  before comparison, so विनोद finds वीनोद automatically.
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// STEP 1 — VOWEL NORMALISATION  (इ↔ई and उ↔ऊ only)
+// ═══════════════════════════════════════════════════════
 function normalizeDevaVowels(str) {
   return str
-    .replace(/\u0908/g, '\u0907')  // ई  → इ
-    .replace(/\u090A/g, '\u0909')  // ऊ  → उ
-    .replace(/\u0940/g, '\u093F')  // ी  → ि  (matra)
-    .replace(/\u0942/g, '\u0941'); // ू  → ु  (matra)
+    .replace(/\u0908/g, '\u0907')  // ई → इ
+    .replace(/\u090A/g, '\u0909')  // ऊ → उ
+    .replace(/\u0940/g, '\u093F')  // ी → ि  (matra)
+    .replace(/\u0942/g, '\u0941'); // ू → ु  (matra)
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  STEP 2 — DEVANAGARI CONSONANT SKELETON
-//  Everything is done in Devanagari — NO Roman letters involved.
+// ═══════════════════════════════════════════════════════
+// STEP 2 — DEVANAGARI CONSONANT SKELETON
 //
-//  Algorithm:
-//  a) Apply vowel normalisation.
-//  b) Merge phonetically similar consonant pairs (in Devanagari):
-//       ट→त  ठ→थ  ड→द  ढ→ध  ण→न   (retroflex → dental equivalent)
-//       ष→श                          (both are 'sh' sounds)
-//       ञ→न  ङ→न                    (rare nasals → न)
-//  c) Strip ALL vowel characters (independent + matras + modifiers).
-//  d) Strip anything that is NOT a Devanagari consonant range.
-//  e) Collapse consecutive duplicate characters.
+// Works entirely in Devanagari — zero Roman involved.
 //
-//  Result: a pure Devanagari consonant string, e.g.
-//    राशिद  →  रशद
-//    रशीद   →  रशद   (same → exact match, 0 edits)
-//    विनोद  →  वनद
-//    वीनोद  →  वनद   (same → exact match)
-//    काजी   →  कज
-//    राजेश  →  रजश
-//    रमेश   →  रमश   (rjsh ≠ rmsh, length 3, threshold 0 → no false match ✅)
-// ═══════════════════════════════════════════════════════════════
+// Consonant merges (similar-sounding pairs):
+//   Retroflex → dental:  ण→न  ट→त  ठ→थ  ड→द  ढ→ध
+//   Sibilant:            ष→श
+//   Aspirated sibilant:  झ→ज   ← key for names like मुम्ताझोद्दीन
+//   Rare nasals:         ञ→न  ङ→न
+//
+// Then: strip all vowel matras, independent vowels, modifiers.
+// Keep only Devanagari consonants U+0915–U+0939.
+// Collapse consecutive duplicate consonants.
+//
+// EXAMPLE SKELETONS (shows why false matches were happening):
+//   मुमताजुद्दीन → मतजदन  (5 chars)
+//   मुमताजोदिन   → मतजदन  (5 chars)  ✅ exact skeleton match
+//   मुमवाजोद्दीन → मवजदन  (5 chars)  ✅ 1 edit (त→व)
+//   मुम्ताझोद्दीन→ मतजदन  (5 chars)  ✅ झ merged to ज
+//   मतदान        → मतदन   (4 chars)  ❌ blocked by length rule (< 5)
+//   ताजोद्दोन    → तजदन   (4 chars)  ❌ blocked by length rule (< 5)
+// ═══════════════════════════════════════════════════════
 function phoneticKey(devaWord) {
   let s = normalizeDevaVowels(devaWord);
 
-  // Merge retroflex consonants → dental equivalents
+  // Merge similar consonants
   s = s
     .replace(/\u0923/g, '\u0928')  // ण → न
     .replace(/\u091F/g, '\u0924')  // ट → त
@@ -243,33 +212,43 @@ function phoneticKey(devaWord) {
     .replace(/\u0921/g, '\u0926')  // ड → द
     .replace(/\u0922/g, '\u0927')  // ढ → ध
     .replace(/\u0937/g, '\u0936')  // ष → श
+    .replace(/\u091D/g, '\u091C')  // झ → ज  ← aspirated form of ज
     .replace(/\u091E/g, '\u0928')  // ञ → न
     .replace(/\u0919/g, '\u0928'); // ङ → न
 
-  // Strip independent vowels
+  // Strip independent vowels (U+0904–U+0914 and ऋ ॠ ऌ)
   s = s.replace(/[\u0904-\u0914\u0960\u0961]/g, '');
 
-  // Strip vowel matras & modifiers (halant, anusvara, visarga, chandrabindu, nukta)
-  s = s.replace(/[\u093A-\u094F\u0951-\u0954\u0900-\u0903]/g, '');
+  // Strip vowel matras + all modifiers
+  // (halant U+094D, anusvara U+0902, visarga U+0903,
+  //  chandrabindu U+0901, nukta U+093C, all matras U+093E–U+094C)
+  s = s.replace(/[\u0900-\u0903\u093A-\u094F\u0951-\u0954]/g, '');
 
-  // Keep only characters in the Devanagari consonant range U+0915–U+0939 and U+0958–U+095F
+  // Keep ONLY Devanagari consonant codepoints U+0915–U+0939
+  // (क to ह) and nukta-consonants U+0958–U+095F
   s = s.replace(/[^\u0915-\u0939\u0958-\u095F]/g, '');
 
-  // Collapse runs of the same consonant (e.g. दद → द)
+  // Collapse consecutive identical consonants (दद → द)
   s = s.replace(/(.)\1+/g, '$1');
 
   return s;
 }
 
+// ═══════════════════════════════════════════════════════
+// THRESHOLD TABLE
+//   len ≤ 3  → 0 edits  (short skeletons: exact only)
+//   len 4–6  → 1 edit
+//   len 7+   → 2 edits
+// ═══════════════════════════════════════════════════════
 function allowedEdits(len) {
   if (len <= 3) return 0;
   if (len <= 6) return 1;
   return 2;
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  LEVENSHTEIN (works on any string — here used on Devanagari keys)
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// LEVENSHTEIN on Devanagari strings
+// ═══════════════════════════════════════════════════════
 function levenshtein(a, b) {
   if (a === b) return 0;
   if (!a.length) return b.length;
@@ -287,25 +266,48 @@ function levenshtein(a, b) {
   return prev[b.length];
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  TOKEN MATCHER
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// TOKEN MATCHER
+//
+// KEY FIX for long names:
+//
+// OLD bug (caused मुमताजुद्दीन to match मतदान, ताजोद्दोन):
+//   Allowed record skeletons 1 char shorter than query.
+//   मतजदन(5) matched मतदन(4) with distance=1, thresh=1. ❌
+//
+// NEW rule:
+//   When query skeleton length >= 4,
+//   the record word skeleton MUST be >= query skeleton length.
+//   This blocks shorter common words from matching long name queries.
+//
+//   मतजदन(5) vs मतदन(4):   4 < 5 → SKIP  ✅ no false match
+//   मतजदन(5) vs तजदन(4):   4 < 5 → SKIP  ✅ no false match
+//   मतजदन(5) vs मवजदन(5):  5 ≥ 5 → CHECK, dist=1 ≤ 1 → MATCH ✅
+//   मतजदन(5) vs मतजदन(5):  5 ≥ 5 → CHECK, dist=0 → MATCH ✅
+//
+// Upper bound: record skeleton not more than (thresh+1) chars longer.
+// ═══════════════════════════════════════════════════════
 function tokenMatches(qK, recKeys) {
   if (!qK) return true;
   const thresh = allowedEdits(qK.length);
   for (const rk of recKeys) {
     if (!rk) continue;
-    if (Math.abs(qK.length - rk.length) > thresh) continue;
+    // ← THE CRITICAL FIX: for queries with 4+ consonant skeleton,
+    //   record words must have skeleton AT LEAST as long as the query.
+    if (qK.length >= 4 && rk.length < qK.length) continue;
+    // Upper bound: don't match if record word is too much longer
+    if (rk.length > qK.length + thresh + 1) continue;
     if (levenshtein(qK, rk) <= thresh) return true;
   }
   return false;
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  LONG COMPOUND-NAME SKELETON MATCH
-//  Concatenates all token keys into one skeleton and slides
-//  it over the record's full skeleton.
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// LONG COMPOUND-NAME SKELETON MATCH
+// Concatenates all token keys and slides over record skeleton.
+// Handles compound names where word boundaries differ.
+// Requires >= 2 query tokens (not triggered for single words).
+// ═══════════════════════════════════════════════════════
 function longNameMatch(qKeys, recKeys) {
   if (qKeys.length < 2) return false;
   const qSkel = qKeys.join('');
@@ -324,9 +326,9 @@ function longNameMatch(qKeys, recKeys) {
   return false;
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  HIGHLIGHT (Devanagari tokens)
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// HIGHLIGHT
+// ═══════════════════════════════════════════════════════
 function highlight(text, terms) {
   let out = text;
   for (const t of terms) {
@@ -337,17 +339,16 @@ function highlight(text, terms) {
   return out;
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  RENDER CARD
-//  AC No.   : always 89
-//  Part No. : first 3 chars of rec.file
-//  Sr No.   : first word of the result line
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// RENDER CARD
+//   AC No.   : always 89
+//   Part No. : first 3 chars of rec.file
+//   Sr No.   : first word of the result line
+// ═══════════════════════════════════════════════════════
 function renderCard(rec, text, matchClass, matchLabel, qTokens) {
   const partNo = (rec.file || '').substring(0, 3);
   const srNo   = (text || '').trim().split(/\s+/)[0] || '';
   const body   = matchClass === 'exact' ? highlight(text, qTokens) : text;
-
   return `
   <div class="result-card ${matchClass}">
     <div class="meta-strip">
@@ -369,45 +370,38 @@ function renderCard(rec, text, matchClass, matchLabel, qTokens) {
   </div>`;
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  MAIN SEARCH — pure Devanagari only
+// ═══════════════════════════════════════════════════════
+// MAIN SEARCH — pure Devanagari
 //
-//  If the query contains NO Devanagari characters → warn and stop.
-//
-//  Layer 1 : exact substring (original Devanagari)
-//  Layer 2 : vowel-normalised substring
-//            (विनोद finds वीनोद, सुरज finds सूरज)
-//  Layer 3a: token-by-token phonetic key match (Devanagari skeleton)
-//  Layer 3b: long compound-name skeleton match
-// ═══════════════════════════════════════════════════════════════
+// Layer 1 : exact substring (original Devanagari)
+// Layer 2 : vowel-normalised substring
+//           विनोद finds वीनोद, सुरज finds सूरज
+// Layer 3a: token phonetic match (Devanagari skeletons)
+//           with strict length lower-bound on record words
+// Layer 3b: long compound-name skeleton match (multi-token)
+// ═══════════════════════════════════════════════════════
 let data = [];
 
 function search() {
   const raw = document.getElementById("q").value.trim();
   if (!raw) return;
 
-  const statusEl = document.getElementById("status");
+  const statusEl  = document.getElementById("status");
   const resultsEl = document.getElementById("results");
 
-  // ── Guard: reject non-Devanagari input immediately ───────────
+  // Guard: reject non-Devanagari input
   if (!hasDevanagari(raw)) {
     statusEl.className = 'warn';
     statusEl.innerHTML =
       '⚠️ कृपया नाव <b>मराठी (देवनागरी)</b> मध्ये टाका. &nbsp;|&nbsp; ' +
-      'Please type the name in <b>Marathi script only</b>. &nbsp; ' +
-      'उदा: <b>राजेश पाटील</b> — not Rajesh Patil.';
+      'Please type in <b>Marathi script only</b>. &nbsp; उदा: <b>राजेश पाटील</b>';
     resultsEl.innerHTML = '';
     return;
   }
   statusEl.className = '';
 
-  // Tokenise (Devanagari words)
   const qTokens     = raw.split(/\s+/).filter(Boolean);
-
-  // Vowel-normalised tokens (ई→इ, ऊ→उ) — still Devanagari
   const qNormTokens = qTokens.map(normalizeDevaVowels);
-
-  // Devanagari consonant skeleton keys
   const qKeys       = qTokens.map(phoneticKey);
   const hasKey      = qKeys.some(k => k.length >= 1);
 
@@ -415,19 +409,17 @@ function search() {
   const phoneticList = [];
 
   data.forEach(rec => {
-    const text    = rec.text || '';
-    const textLow = text;   // Devanagari — no lowercasing needed
+    const text = rec.text || '';
 
-    // ── Layer 1: exact substring ──────────────────────────────
-    if (qTokens.every(t => textLow.includes(t))) {
+    // Layer 1: exact substring
+    if (qTokens.every(t => text.includes(t))) {
       exactList.push({ rec, text });
       return;
     }
 
-    // Vowel-normalised record text (Devanagari)
-    const textNorm = normalizeDevaVowels(textLow);
+    const textNorm = normalizeDevaVowels(text);
 
-    // ── Layer 2: vowel-normalised substring ───────────────────
+    // Layer 2: vowel-normalised substring
     if (qNormTokens.every(nt => nt.length > 0 && textNorm.includes(nt))) {
       phoneticList.push({ rec, text, badge: '🔤 स्वर-साम्य' });
       return;
@@ -435,23 +427,21 @@ function search() {
 
     if (!hasKey) return;
 
-    // Record word consonant skeletons
-    const recWords = textLow.split(/\s+/).filter(Boolean);
+    const recWords = text.split(/\s+/).filter(Boolean);
     const recKeys  = recWords.map(phoneticKey);
 
-    // ── Layer 3a: token-by-token phonetic match ───────────────
+    // Layer 3a: token-by-token phonetic (with length lower-bound fix)
     if (qKeys.every(qk => tokenMatches(qk, recKeys))) {
       phoneticList.push({ rec, text, badge: '🔀 ध्वनि-साम्य' });
       return;
     }
 
-    // ── Layer 3b: long compound-name skeleton match ───────────
+    // Layer 3b: compound long-name skeleton (only for multi-token queries)
     if (longNameMatch(qKeys, recKeys)) {
       phoneticList.push({ rec, text, badge: '🔀 ध्वनि-साम्य' });
     }
   });
 
-  // Render
   let html = '';
   exactList.forEach(({ rec, text }) => {
     html += renderCard(rec, text, 'exact', '✅ हुबेहूब', qTokens);
@@ -480,9 +470,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// ═══════════════════════════════════════════════════════════════
-//  LOAD DATA
-// ═══════════════════════════════════════════════════════════════
 async function load() {
   try {
     const r = await fetch("data.json");
