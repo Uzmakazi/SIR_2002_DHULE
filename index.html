@@ -3,79 +3,260 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🗳 2002 SIR Dhule</title>
+<title>🗳 मतदार यादी 2002 — SIR Dhule</title>
 <style>
-* { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
-  font-family: system-ui, sans-serif;
-  margin: 0;
-  background: linear-gradient(135deg, #1d2671, #c33764);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #0f0c29;
+  background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
   min-height: 100vh;
+  padding: 20px 12px 40px;
 }
-.container { max-width: 700px; margin: auto; padding: 12px; }
-.header { color: white; text-align: center; margin-top: 20px; padding: 0 10px; }
-.header h2 { margin-bottom: 4px; }
-.card { background: white; padding: 15px; border-radius: 14px; margin-top: 15px; width: 100%; }
-input { width: 100%; padding: 14px; margin-top: 10px; font-size: 16px; border-radius: 10px; border: 1px solid #ddd; }
-button {
-  width: 100%; padding: 14px; margin-top: 10px; font-size: 16px;
-  border-radius: 10px; border: none;
-  background: linear-gradient(90deg, #2193b0, #6dd5ed);
-  color: white; font-weight: bold; cursor: pointer;
+
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 28px;
 }
-button:hover { opacity: 0.9; }
-.hint { font-size: 12px; color: #888; margin-top: 8px; text-align: center; line-height: 1.8; }
-#count { font-weight: bold; margin-top: 12px; color: #333; min-height: 20px; }
-.result { background: #f7f7f7; padding: 12px; margin-top: 10px; border-radius: 10px; border-left: 4px solid #27ae60; }
-.result.phonetic { border-left-color: #e67e22; background: #fffaf4; }
-.badge { font-size: 11px; color: #555; margin-bottom: 4px; font-weight: bold; }
-.text-line { font-size: 15px; line-height: 1.7; }
-.file { font-size: 12px; color: #888; margin-top: 4px; }
-mark { background: #ffe066; border-radius: 2px; padding: 0 1px; }
+.header .badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #c9d6ff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
+.header h1 {
+  font-size: clamp(22px, 5vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: linear-gradient(90deg, #c9d6ff, #e2a4f3, #f9c8a1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+.header p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 0.3px;
+}
+
+/* ── CARD ── */
+.card {
+  max-width: 680px;
+  margin: 0 auto 24px;
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 20px;
+  padding: 24px;
+}
+
+/* ── SEARCH BAR ── */
+.search-wrap {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
+}
+.search-wrap input {
+  flex: 1;
+  padding: 14px 18px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.search-wrap input::placeholder { color: rgba(255,255,255,0.35); }
+.search-wrap input:focus {
+  border-color: rgba(201,214,255,0.5);
+  background: rgba(255,255,255,0.12);
+}
+.search-wrap button {
+  padding: 14px 22px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  flex-shrink: 0;
+}
+.search-wrap button:hover { opacity: 0.88; }
+.search-wrap button:active { transform: scale(0.96); }
+
+/* ── TIPS ── */
+.tips {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tip {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 4px 12px;
+}
+
+/* ── STATUS ── */
+#status {
+  max-width: 680px;
+  margin: 0 auto 16px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  min-height: 20px;
+}
+#status b { color: #c9d6ff; }
+#status i { color: rgba(255,255,255,0.7); }
+
+/* ── RESULTS ── */
+.results-wrap { max-width: 680px; margin: 0 auto; }
+
+.result-card {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  transition: transform 0.15s, border-color 0.15s;
+}
+.result-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(201,214,255,0.25);
+}
+.result-card.exact  { border-left: 3px solid #4ade80; }
+.result-card.fuzzy  { border-left: 3px solid #fb923c; }
+
+/* Meta strip — AC / Part / Sr */
+.meta-strip {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px 0;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.meta-pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+}
+.meta-pill .label {
+  font-size: 10px;
+  color: rgba(255,255,255,0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.meta-pill .value {
+  font-weight: 700;
+  color: #c9d6ff;
+  font-size: 12px;
+}
+.meta-pill.ac   .value { color: #86efac; }
+.meta-pill.part .value { color: #fde68a; }
+.meta-pill.sr   .value { color: #f9a8d4; }
+
+/* match badge */
+.match-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 3px 9px;
+  border-radius: 6px;
+}
+.exact  .match-badge { background: rgba(74,222,128,0.15); color: #4ade80; }
+.fuzzy  .match-badge { background: rgba(251,146,60,0.15);  color: #fb923c; }
+
+/* Name line */
+.name-line {
+  padding: 10px 14px 12px;
+  font-size: 15px;
+  color: rgba(255,255,255,0.88);
+  line-height: 1.7;
+  word-break: break-word;
+}
+mark {
+  background: rgba(255,224,100,0.3);
+  color: #ffe064;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+/* ── EMPTY STATE ── */
+.empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: rgba(255,255,255,0.3);
+}
+.empty .icon { font-size: 40px; margin-bottom: 10px; }
+.empty p { font-size: 14px; }
 </style>
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <h2>🗳 2002 SIR Dhule</h2>
-    मतदार यादी शोधा
+
+<div class="header">
+  <div class="badge">Maharashtra Electoral Roll</div>
+  <h1>🗳 मतदार यादी 2002</h1>
+  <p>SIR Dhule — Fuzzy &amp; Phonetic Name Search</p>
+</div>
+
+<div class="card">
+  <div class="search-wrap">
+    <input id="q"
+      placeholder="नाव टाका — मराठी किंवा Roman (e.g. Vinod / विनोद)"
+      autocomplete="off" autocorrect="off" spellcheck="false">
+    <button onclick="search()" title="Search">🔍</button>
   </div>
-  <div class="card">
-    <input id="q" placeholder="नाव शोधा — Roman or मराठी दोन्ही चालतात">
-    <button onclick="search()">🔍 शोधा / Search</button>
-    <div class="hint">
-      💡 विनोद = वीनोद &nbsp;|&nbsp; रमेश = रामेश &nbsp;|&nbsp;
-      Kazi = Qazi = काजी &nbsp;|&nbsp; Ahmad = Ahmed = अहमद
-    </div>
-    <div id="count"></div>
-    <div id="results"></div>
+  <div class="tips">
+    <span class="tip">विनोद = वीनोद</span>
+    <span class="tip">सुरज = सूरज</span>
+    <span class="tip">Kazi = Qazi = काजी</span>
+    <span class="tip">Ahmad = Ahmed = अहमद</span>
+    <span class="tip">Roman ✓ मराठी ✓</span>
   </div>
 </div>
 
+<div id="status"></div>
+<div class="results-wrap" id="results"></div>
+
 <script>
 // ═══════════════════════════════════════════════════
-// STEP 1 — DEVANAGARI VOWEL PAIR NORMALISATION
-// Collapse each long/short pair → short form.
-// This runs BEFORE Roman conversion so both
-// विनोद and वीनोद become identical strings.
-//
-// Pairs:  अ↔आ  इ↔ई  उ↔ऊ  ए↔ऐ  ओ↔औ
+// VOWEL NORMALISATION — only इ↔ई and उ↔ऊ pairs
+// (as requested — अ/आ, ए/ऐ, ओ/औ are NOT collapsed)
 // ═══════════════════════════════════════════════════
 function normalizeDevaVowels(str) {
   return str
-    .replace(/\u0906/g, '\u0905')  // आ → अ
     .replace(/\u0908/g, '\u0907')  // ई → इ
     .replace(/\u090A/g, '\u0909')  // ऊ → उ
-    .replace(/\u0910/g, '\u090F')  // ऐ → ए
-    .replace(/\u0914/g, '\u0913')  // औ → ओ
-    .replace(/\u0940/g, '\u093F')  // ी → ि
-    .replace(/\u0942/g, '\u0941')  // ू → ु
-    .replace(/\u0948/g, '\u0947')  // ै → े
-    .replace(/\u094C/g, '\u094B'); // ौ → ो
+    .replace(/\u0940/g, '\u093F')  // ी → ि  (matra)
+    .replace(/\u0942/g, '\u0941'); // ू → ु  (matra)
 }
 
 // ═══════════════════════════════════════════════════
-// STEP 2 — DEVANAGARI → ROMAN
+// DEVANAGARI → ROMAN
 // ═══════════════════════════════════════════════════
 const DEVA_MAP = {
   '\u0915':'k','\u0916':'kh','\u0917':'g','\u0918':'gh','\u0919':'ng',
@@ -86,8 +267,11 @@ const DEVA_MAP = {
   '\u092F':'y','\u0930':'r','\u0932':'l','\u0935':'v',
   '\u0936':'sh','\u0937':'sh','\u0938':'s','\u0939':'h',
   '\u0933':'l','\u0931':'r',
-  '\u0905':'a','\u0907':'i','\u0909':'u','\u090F':'e','\u0913':'o','\u090B':'ri',
-  '\u093E':'a','\u093F':'i','\u0941':'u','\u0947':'e','\u094B':'o','\u0943':'ri',
+  '\u0905':'a','\u0906':'aa',
+  '\u0907':'i','\u0909':'u',
+  '\u090F':'e','\u0910':'ai','\u0913':'o','\u0914':'au','\u090B':'ri',
+  '\u093E':'aa','\u093F':'i','\u0941':'u',
+  '\u0947':'e','\u0948':'ai','\u094B':'o','\u094C':'au','\u0943':'ri',
   '\u094D':'','\u0902':'n','\u0903':'h','\u0901':'n','\u093C':'',
   '\u0966':'0','\u0967':'1','\u0968':'2','\u0969':'3','\u096A':'4',
   '\u096B':'5','\u096C':'6','\u096D':'7','\u096E':'8','\u096F':'9',
@@ -99,22 +283,16 @@ function devaToRoman(str) {
 }
 
 // ═══════════════════════════════════════════════════
-// STEP 3 — ROMAN VOWEL NORMALISATION
-// aa→a  ee/ii→i  oo/uu→u  ai/ei→e  au/ou→o
-// So "Raamesh" = "Ramesh", "Veenod" = "Vinod"
+// ROMAN VOWEL NORMALISATION — only ii/ee→i and oo/uu→u
 // ═══════════════════════════════════════════════════
 function normalizeRomanVowels(str) {
   return str
-    .replace(/aa/g,'a')
     .replace(/ee|ii/g,'i')
-    .replace(/oo|uu/g,'u')
-    .replace(/ai|ei/g,'e')
-    .replace(/au|ou/g,'o');
+    .replace(/oo|uu/g,'u');
 }
 
 // ═══════════════════════════════════════════════════
-// FULL NORMALISE — combines all 3 steps above
-// Produces a clean Roman string with short vowels only
+// FULL NORMALISE
 // ═══════════════════════════════════════════════════
 function fullNormalize(str) {
   const dv = normalizeDevaVowels(str.toLowerCase());
@@ -123,12 +301,7 @@ function fullNormalize(str) {
 }
 
 // ═══════════════════════════════════════════════════
-// PHONETIC KEY — consonant-only skeleton
-//
-// Threshold (no false positives for short names):
-//   len ≤ 3  → 0 edits  (exact; short skeletons fragile)
-//   len 4–6  → 1 edit
-//   len 7+   → 2 edits
+// PHONETIC KEY — consonant skeleton
 // ═══════════════════════════════════════════════════
 function phoneticKey(word) {
   let s = fullNormalize(word);
@@ -171,9 +344,6 @@ function levenshtein(a, b) {
   return prev[b.length];
 }
 
-// ═══════════════════════════════════════════════════
-// TOKEN MATCH — does query key match any record word?
-// ═══════════════════════════════════════════════════
 function tokenMatches(qK, recKeys) {
   if (!qK) return true;
   const thresh = allowedEdits(qK.length);
@@ -185,38 +355,17 @@ function tokenMatches(qK, recKeys) {
   return false;
 }
 
-// ═══════════════════════════════════════════════════
-// LONG-NAME SKELETON MATCH
-//
-// Fixes compound-name failures where token boundaries
-// differ or extra words exist in the record.
-//
-// Approach: concatenate all token keys into one skeleton
-// and slide it over the record's concatenated skeleton.
-// If the query skeleton fits as a substring (or nearly),
-// it's a match — regardless of word-boundary positions.
-//
-// Example:
-//   Query  "Kazi Shoebuddin" → keys kj+sbdn → "kjsbdn"
-//   Record "काजी शेईबुद्दीन मुमवाजोद्दीन"
-//          → kj+sbdn+mvjdn  → "kjsbdnmvjdn"
-//   "kjsbdn" found in "kjsbdnmvjdn" → ✅ MATCH
-// ═══════════════════════════════════════════════════
 function longNameMatch(qKeys, recKeys) {
   if (qKeys.length < 2) return false;
   const qSkel = qKeys.join('');
   const rSkel = recKeys.join('');
   if (!qSkel || qSkel.length < 4) return false;
-
-  // Direct containment
   if (rSkel.includes(qSkel)) return true;
-
-  // Sliding window with edits
-  const wLen   = qSkel.length;
+  const wLen = qSkel.length;
   const thresh = allowedEdits(wLen);
   if (rSkel.length >= wLen) {
     for (let i = 0; i <= rSkel.length - wLen; i++) {
-      if (levenshtein(qSkel, rSkel.slice(i, i + wLen)) <= thresh) return true;
+      if (levenshtein(qSkel, rSkel.slice(i, i+wLen)) <= thresh) return true;
     }
   } else {
     if (levenshtein(qSkel, rSkel) <= allowedEdits(rSkel.length)) return true;
@@ -238,6 +387,41 @@ function highlight(text, terms) {
 }
 
 // ═══════════════════════════════════════════════════
+// RENDER A SINGLE RESULT CARD
+//
+// AC Number : always 89
+// Part No.  : rec.file
+// Sr No.    : first 4 characters of rec.text
+// ═══════════════════════════════════════════════════
+function renderCard(rec, text, matchClass, matchLabel, qTokens) {
+  const srNo   = (text || '').trim().substring(0, 4);
+  const partNo = rec.file || '';
+  const body   = matchClass === 'exact'
+    ? highlight(text, qTokens)
+    : text;
+
+  return `
+  <div class="result-card ${matchClass}">
+    <div class="meta-strip">
+      <div class="meta-pill ac">
+        <span class="label">AC No.</span>
+        <span class="value">89</span>
+      </div>
+      <div class="meta-pill part">
+        <span class="label">Part No.</span>
+        <span class="value">${partNo}</span>
+      </div>
+      <div class="meta-pill sr">
+        <span class="label">Sr No.</span>
+        <span class="value">${srNo}</span>
+      </div>
+      <span class="match-badge">${matchLabel}</span>
+    </div>
+    <div class="name-line">${body}</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════
 // MAIN SEARCH
 // ═══════════════════════════════════════════════════
 let data = [];
@@ -246,10 +430,10 @@ function search() {
   const raw = document.getElementById("q").value.trim();
   if (!raw) return;
 
-  const qTokens      = raw.toLowerCase().split(/\s+/).filter(Boolean);
-  const qNormTokens  = qTokens.map(t => fullNormalize(t));
-  const qKeys        = qTokens.map(phoneticKey);
-  const hasKey       = qKeys.some(k => k.length >= 2);
+  const qTokens     = raw.toLowerCase().split(/\s+/).filter(Boolean);
+  const qNormTokens = qTokens.map(t => fullNormalize(t));
+  const qKeys       = qTokens.map(phoneticKey);
+  const hasKey      = qKeys.some(k => k.length >= 2);
 
   const exactList    = [];
   const phoneticList = [];
@@ -269,55 +453,44 @@ function search() {
     const recKeys  = recWords.map(phoneticKey);
 
     // Layer 2: vowel-normalised cross-script substring
-    // विनोद finds वीनोद, रमेश finds रामेश, Veenod finds वीनोद
     if (qNormTokens.every(nt => nt.length > 1 && textNorm.includes(nt))) {
-      phoneticList.push({ rec, text, badge: '🔤 Vowel / Script match' });
+      phoneticList.push({ rec, text, badge: '🔤 Vowel/Script' });
       return;
     }
 
     if (!hasKey) return;
 
-    // Layer 3a: token-by-token phonetic match
+    // Layer 3a: token-by-token phonetic
     if (qKeys.every(qk => tokenMatches(qk, recKeys))) {
-      phoneticList.push({ rec, text, badge: '🔀 Phonetic match' });
+      phoneticList.push({ rec, text, badge: '🔀 Phonetic' });
       return;
     }
 
-    // Layer 3b: long compound-name skeleton match
+    // Layer 3b: long compound-name skeleton
     if (longNameMatch(qKeys, recKeys)) {
-      phoneticList.push({ rec, text, badge: '🔀 Phonetic match (compound name)' });
+      phoneticList.push({ rec, text, badge: '🔀 Phonetic' });
     }
   });
 
   let html = '';
-
   exactList.forEach(({ rec, text }) => {
-    html += `<div class="result">
-      <div class="badge">✅ Exact match</div>
-      <div class="text-line">${highlight(text, qTokens)}</div>
-      <div class="file">${rec.area} | ${rec.file} (line ${rec.line})</div>
-    </div>`;
+    html += renderCard(rec, text, 'exact', '✅ Exact', qTokens);
   });
-
   phoneticList.forEach(({ rec, text, badge }) => {
-    html += `<div class="result phonetic">
-      <div class="badge">${badge}</div>
-      <div class="text-line">${text}</div>
-      <div class="file">${rec.area} | ${rec.file} (line ${rec.line})</div>
-    </div>`;
+    html += renderCard(rec, text, 'fuzzy', badge, qTokens);
   });
 
   const total = exactList.length + phoneticList.length;
 
   document.getElementById("results").innerHTML = html ||
-    `<p style="color:#999;margin-top:14px;text-align:center">
-       कोणतेही परिणाम सापडले नाहीत / No results found
-     </p>`;
+    `<div class="empty">
+      <div class="icon">🔍</div>
+      <p>कोणतेही परिणाम सापडले नाहीत<br>No results found for "<b>${raw}</b>"</p>
+     </div>`;
 
-  document.getElementById("count").innerHTML =
-    `Found <b>${total}</b> result${total!==1?'s':''}
-     — ${exactList.length} exact, ${phoneticList.length} phonetic
-     — for "<i>${raw}</i>"`;
+  document.getElementById("status").innerHTML = total
+    ? `Found <b>${total}</b> result${total!==1?'s':''} — ${exactList.length} exact, ${phoneticList.length} phonetic — for "<i>${raw}</i>"`
+    : '';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -327,14 +500,14 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ═══════════════════════════════════════════════════
-// LOAD  (no "Total records" shown)
+// LOAD DATA
 // ═══════════════════════════════════════════════════
 async function load() {
   try {
     const r = await fetch("data.json");
     data = await r.json();
   } catch {
-    document.getElementById("count").innerHTML =
+    document.getElementById("status").innerHTML =
       "⚠️ data.json not found — place it in the same folder as this file.";
   }
 }
