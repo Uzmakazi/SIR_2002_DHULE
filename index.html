@@ -98,9 +98,27 @@ body {
 .search-wrap button:hover { opacity: 0.88; }
 .search-wrap button:active { transform: scale(0.96); }
 
+/* ── INSTRUCTION BOX ── */
+.instruction {
+  margin-top: 16px;
+  background: rgba(255, 200, 100, 0.08);
+  border: 1px solid rgba(255, 200, 100, 0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.instruction .icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.instruction-text { font-size: 13px; color: rgba(255,220,130,0.9); line-height: 1.6; }
+.instruction-text strong { color: #fde68a; font-size: 14px; }
+.instruction-text .example { margin-top: 6px; font-size: 12px; color: rgba(255,220,130,0.65); }
+.instruction-text .example span { color: #86efac; font-weight: 600; }
+.instruction-text .example .wrong { color: #fca5a5; text-decoration: line-through; }
+
 /* ── TIPS ── */
 .tips {
-  margin-top: 14px;
+  margin-top: 12px;
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -141,10 +159,10 @@ body {
   transform: translateY(-1px);
   border-color: rgba(201,214,255,0.25);
 }
-.result-card.exact  { border-left: 3px solid #4ade80; }
-.result-card.fuzzy  { border-left: 3px solid #fb923c; }
+.result-card.exact { border-left: 3px solid #4ade80; }
+.result-card.fuzzy { border-left: 3px solid #fb923c; }
 
-/* Meta strip — AC / Part / Sr */
+/* Meta strip */
 .meta-strip {
   display: flex;
   gap: 8px;
@@ -160,8 +178,6 @@ body {
   border: 1px solid rgba(255,255,255,0.12);
   border-radius: 8px;
   padding: 4px 10px;
-  font-size: 11px;
-  color: rgba(255,255,255,0.55);
 }
 .meta-pill .label {
   font-size: 10px;
@@ -171,14 +187,12 @@ body {
 }
 .meta-pill .value {
   font-weight: 700;
-  color: #c9d6ff;
   font-size: 12px;
 }
 .meta-pill.ac   .value { color: #86efac; }
 .meta-pill.part .value { color: #fde68a; }
 .meta-pill.sr   .value { color: #f9a8d4; }
 
-/* match badge */
 .match-badge {
   margin-left: auto;
   font-size: 10px;
@@ -187,8 +201,8 @@ body {
   padding: 3px 9px;
   border-radius: 6px;
 }
-.exact  .match-badge { background: rgba(74,222,128,0.15); color: #4ade80; }
-.fuzzy  .match-badge { background: rgba(251,146,60,0.15);  color: #fb923c; }
+.exact .match-badge { background: rgba(74,222,128,0.15); color: #4ade80; }
+.fuzzy .match-badge { background: rgba(251,146,60,0.15);  color: #fb923c; }
 
 /* Name line */
 .name-line {
@@ -220,22 +234,36 @@ mark {
 <div class="header">
   <div class="badge">Maharashtra Electoral Roll</div>
   <h1>🗳 मतदार यादी 2002</h1>
-  <p>SIR Dhule — Fuzzy &amp; Phonetic Name Search</p>
+  <p>SIR Dhule — मतदाराचे नाव शोधा</p>
 </div>
 
 <div class="card">
   <div class="search-wrap">
     <input id="q"
-      placeholder="नाव टाका — मराठी किंवा Roman (e.g. Vinod / विनोद)"
+      placeholder="इथे नाव टाका… उदा. राजेश पाटील"
       autocomplete="off" autocorrect="off" spellcheck="false">
-    <button onclick="search()" title="Search">🔍</button>
+    <button onclick="search()" title="शोधा">🔍</button>
   </div>
+
+  <!-- Instruction box -->
+  <div class="instruction">
+    <div class="icon">⚠️</div>
+    <div class="instruction-text">
+      <strong>फक्त मराठी भाषेत नाव टाका</strong><br>
+      नाव शोधताना मराठी (देवनागरी) अक्षरातच टाइप करा.
+      <div class="example">
+        ✅ बरोबर: <span>राजेश पाटील</span> &nbsp;|&nbsp; <span>विनोद कदम</span><br>
+        ❌ चुकीचे: <span class="wrong">Rajesh Patil</span> &nbsp;|&nbsp; <span class="wrong">Vinod Kadam</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vowel-pair tips -->
   <div class="tips">
-    <span class="tip">विनोद = वीनोद</span>
+    <span class="tip">💡 विनोद = वीनोद</span>
     <span class="tip">सुरज = सूरज</span>
-    <span class="tip">Kazi = Qazi = काजी</span>
-    <span class="tip">Ahmad = Ahmed = अहमद</span>
-    <span class="tip">Roman ✓ मराठी ✓</span>
+    <span class="tip">इ = ई &nbsp;ढूंढता है</span>
+    <span class="tip">उ = ऊ &nbsp;ढूंढता है</span>
   </div>
 </div>
 
@@ -244,8 +272,9 @@ mark {
 
 <script>
 // ═══════════════════════════════════════════════════
-// VOWEL NORMALISATION — only इ↔ई and उ↔ऊ pairs
-// (as requested — अ/आ, ए/ऐ, ओ/औ are NOT collapsed)
+// VOWEL NORMALISATION — only इ↔ई and उ↔ऊ
+// All search happens purely in Devanagari.
+// No Roman conversion is exposed to the user.
 // ═══════════════════════════════════════════════════
 function normalizeDevaVowels(str) {
   return str
@@ -256,7 +285,9 @@ function normalizeDevaVowels(str) {
 }
 
 // ═══════════════════════════════════════════════════
-// DEVANAGARI → ROMAN
+// INTERNAL DEVANAGARI → ROMAN
+// Used ONLY to build the consonant skeleton for
+// phonetic fuzzy matching. Never shown to the user.
 // ═══════════════════════════════════════════════════
 const DEVA_MAP = {
   '\u0915':'k','\u0916':'kh','\u0917':'g','\u0918':'gh','\u0919':'ng',
@@ -267,44 +298,30 @@ const DEVA_MAP = {
   '\u092F':'y','\u0930':'r','\u0932':'l','\u0935':'v',
   '\u0936':'sh','\u0937':'sh','\u0938':'s','\u0939':'h',
   '\u0933':'l','\u0931':'r',
-  '\u0905':'a','\u0906':'aa',
+  '\u0905':'a','\u0906':'a',
   '\u0907':'i','\u0909':'u',
-  '\u090F':'e','\u0910':'ai','\u0913':'o','\u0914':'au','\u090B':'ri',
-  '\u093E':'aa','\u093F':'i','\u0941':'u',
-  '\u0947':'e','\u0948':'ai','\u094B':'o','\u094C':'au','\u0943':'ri',
+  '\u090F':'e','\u0910':'e','\u0913':'o','\u0914':'o','\u090B':'ri',
+  '\u093E':'a','\u093F':'i','\u0941':'u',
+  '\u0947':'e','\u0948':'e','\u094B':'o','\u094C':'o','\u0943':'ri',
   '\u094D':'','\u0902':'n','\u0903':'h','\u0901':'n','\u093C':'',
   '\u0966':'0','\u0967':'1','\u0968':'2','\u0969':'3','\u096A':'4',
   '\u096B':'5','\u096C':'6','\u096D':'7','\u096E':'8','\u096F':'9',
 };
-function devaToRoman(str) {
+function _devaToRoman(str) {
   let out = '';
   for (const ch of str) out += (DEVA_MAP[ch] !== undefined ? DEVA_MAP[ch] : ch);
   return out;
 }
 
 // ═══════════════════════════════════════════════════
-// ROMAN VOWEL NORMALISATION — only ii/ee→i and oo/uu→u
+// PHONETIC KEY (internal only — consonant skeleton)
+// Input: a Devanagari word (already vowel-normalised)
+// Output: consonant-only Roman skeleton for fuzzy diff
 // ═══════════════════════════════════════════════════
-function normalizeRomanVowels(str) {
-  return str
-    .replace(/ee|ii/g,'i')
-    .replace(/oo|uu/g,'u');
-}
-
-// ═══════════════════════════════════════════════════
-// FULL NORMALISE
-// ═══════════════════════════════════════════════════
-function fullNormalize(str) {
-  const dv = normalizeDevaVowels(str.toLowerCase());
-  const rm = devaToRoman(dv);
-  return normalizeRomanVowels(rm);
-}
-
-// ═══════════════════════════════════════════════════
-// PHONETIC KEY — consonant skeleton
-// ═══════════════════════════════════════════════════
-function phoneticKey(word) {
-  let s = fullNormalize(word);
+function phoneticKey(devaWord) {
+  // normalise vowels first, then convert internally
+  let s = _devaToRoman(normalizeDevaVowels(devaWord.toLowerCase()));
+  // merge consonant clusters
   s = s
     .replace(/chh/g,'c').replace(/ch/g,'c')
     .replace(/kh/g,'k') .replace(/gh/g,'g')
@@ -314,9 +331,9 @@ function phoneticKey(word) {
     .replace(/ny/g,'n') .replace(/ri/g,'r')
     .replace(/q/g,'k').replace(/z/g,'j')
     .replace(/x/g,'ks').replace(/w/g,'v');
-  s = s.replace(/[aeiou]/g,'');
-  s = s.replace(/[^a-z]/g,'');
-  s = s.replace(/(.)\1+/g,'$1');
+  s = s.replace(/[aeiou]/g,'');  // strip vowels
+  s = s.replace(/[^a-z]/g,'');   // keep a-z only
+  s = s.replace(/(.)\1+/g,'$1'); // collapse runs
   return s;
 }
 
@@ -387,16 +404,20 @@ function highlight(text, terms) {
 }
 
 // ═══════════════════════════════════════════════════
-// RENDER A SINGLE RESULT CARD
+// RENDER CARD
 //
-// AC Number : always 89
-// Part No.  : rec.file
-// Sr No.    : first 4 characters of rec.text
+// AC No.   : always 89
+// Part No. : first 3 chars of rec.file
+// Sr No.   : first WORD of the result line
 // ═══════════════════════════════════════════════════
 function renderCard(rec, text, matchClass, matchLabel, qTokens) {
-  const srNo   = (text || '').trim().substring(0, 4);
-  const partNo = rec.file || '';
-  const body   = matchClass === 'exact'
+  // Part No. — first 3 characters of rec.file
+  const partNo = (rec.file || '').substring(0, 3);
+
+  // Sr No. — first whitespace-separated word of the text line
+  const srNo = (text || '').trim().split(/\s+/)[0] || '';
+
+  const body = matchClass === 'exact'
     ? highlight(text, qTokens)
     : text;
 
@@ -422,7 +443,13 @@ function renderCard(rec, text, matchClass, matchLabel, qTokens) {
 }
 
 // ═══════════════════════════════════════════════════
-// MAIN SEARCH
+// MAIN SEARCH — Devanagari only
+//
+// Layer 1 : exact substring match (after vowel normalisation)
+// Layer 2 : vowel-pair normalised substring
+//           (विनोद finds वीनोद, सुरज finds सूरज)
+// Layer 3a: token-by-token phonetic/fuzzy
+// Layer 3b: long compound-name skeleton match
 // ═══════════════════════════════════════════════════
 let data = [];
 
@@ -430,8 +457,13 @@ function search() {
   const raw = document.getElementById("q").value.trim();
   if (!raw) return;
 
+  // Tokenise in original Devanagari
   const qTokens     = raw.toLowerCase().split(/\s+/).filter(Boolean);
-  const qNormTokens = qTokens.map(t => fullNormalize(t));
+
+  // Vowel-normalised tokens (इ=ई, उ=ऊ) — still Devanagari
+  const qNormTokens = qTokens.map(t => normalizeDevaVowels(t));
+
+  // Internal phonetic keys (consonant skeletons, never shown to user)
   const qKeys       = qTokens.map(phoneticKey);
   const hasKey      = qKeys.some(k => k.length >= 2);
 
@@ -442,39 +474,45 @@ function search() {
     const text    = rec.text || '';
     const textLow = text.toLowerCase();
 
-    // Layer 1: exact substring
+    // ── Layer 1: exact substring in original Devanagari ─────
     if (qTokens.every(t => textLow.includes(t))) {
       exactList.push({ rec, text });
       return;
     }
 
-    const textNorm = fullNormalize(textLow);
-    const recWords = textLow.split(/\s+/).filter(Boolean);
-    const recKeys  = recWords.map(phoneticKey);
+    // Vowel-normalised version of the record (Devanagari, not Roman)
+    const textNorm = normalizeDevaVowels(textLow);
 
-    // Layer 2: vowel-normalised cross-script substring
-    if (qNormTokens.every(nt => nt.length > 1 && textNorm.includes(nt))) {
-      phoneticList.push({ rec, text, badge: '🔤 Vowel/Script' });
+    // ── Layer 2: vowel-pair normalised substring ─────────────
+    // After collapsing ई→इ and ऊ→उ in both query and record,
+    // विनोद and वीनोद become the same string → exact substring hit.
+    if (qNormTokens.every(nt => nt.length > 0 && textNorm.includes(nt))) {
+      phoneticList.push({ rec, text, badge: '🔤 स्वर-साम्य' });
       return;
     }
 
     if (!hasKey) return;
 
-    // Layer 3a: token-by-token phonetic
+    // Pre-compute record's word phonetic keys
+    const recWords = textLow.split(/\s+/).filter(Boolean);
+    const recKeys  = recWords.map(phoneticKey);
+
+    // ── Layer 3a: token-by-token phonetic match ───────────────
     if (qKeys.every(qk => tokenMatches(qk, recKeys))) {
-      phoneticList.push({ rec, text, badge: '🔀 Phonetic' });
+      phoneticList.push({ rec, text, badge: '🔀 ध्वनि-साम्य' });
       return;
     }
 
-    // Layer 3b: long compound-name skeleton
+    // ── Layer 3b: long compound-name skeleton match ───────────
     if (longNameMatch(qKeys, recKeys)) {
-      phoneticList.push({ rec, text, badge: '🔀 Phonetic' });
+      phoneticList.push({ rec, text, badge: '🔀 ध्वनि-साम्य' });
     }
   });
 
+  // Render
   let html = '';
   exactList.forEach(({ rec, text }) => {
-    html += renderCard(rec, text, 'exact', '✅ Exact', qTokens);
+    html += renderCard(rec, text, 'exact', '✅ हुबेहूब', qTokens);
   });
   phoneticList.forEach(({ rec, text, badge }) => {
     html += renderCard(rec, text, 'fuzzy', badge, qTokens);
@@ -485,11 +523,12 @@ function search() {
   document.getElementById("results").innerHTML = html ||
     `<div class="empty">
       <div class="icon">🔍</div>
-      <p>कोणतेही परिणाम सापडले नाहीत<br>No results found for "<b>${raw}</b>"</p>
+      <p>कोणतेही परिणाम सापडले नाहीत<br>
+         "<b>${raw}</b>" हे नाव यादीत आढळले नाही.</p>
      </div>`;
 
   document.getElementById("status").innerHTML = total
-    ? `Found <b>${total}</b> result${total!==1?'s':''} — ${exactList.length} exact, ${phoneticList.length} phonetic — for "<i>${raw}</i>"`
+    ? `<b>${total}</b> निकाल सापडले — ${exactList.length} हुबेहूब, ${phoneticList.length} ध्वनि-साम्य — "<i>${raw}</i>"`
     : '';
 }
 
@@ -508,7 +547,7 @@ async function load() {
     data = await r.json();
   } catch {
     document.getElementById("status").innerHTML =
-      "⚠️ data.json not found — place it in the same folder as this file.";
+      "⚠️ data.json सापडले नाही — हे file HTML सोबत ठेवा.";
   }
 }
 load();
