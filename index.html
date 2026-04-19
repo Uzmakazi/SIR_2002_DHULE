@@ -124,6 +124,29 @@ mark { background: rgba(255,224,100,0.3); color: #ffe064; border-radius: 3px; pa
 .empty { text-align: center; padding: 40px 20px; color: rgba(255,255,255,0.3); }
 .empty .icon { font-size: 40px; margin-bottom: 10px; }
 .empty p { font-size: 14px; }
+
+.dl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 14px 12px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #c9d6ff;
+  background: rgba(102,126,234,0.18);
+  border: 1px solid rgba(102,126,234,0.35);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, transform 0.1s;
+  cursor: pointer;
+}
+.dl-btn:hover {
+  background: rgba(102,126,234,0.35);
+  border-color: rgba(102,126,234,0.6);
+  transform: translateY(-1px);
+}
+.dl-btn svg { flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -346,9 +369,12 @@ function highlight(text, terms) {
 //   Sr No.   : first word of the result line
 // ═══════════════════════════════════════════════════════
 function renderCard(rec, text, matchClass, matchLabel, qTokens) {
-  const partNo = (rec.file || '').substring(0, 3);
-  const srNo   = (text || '').trim().split(/\s+/)[0] || '';
-  const body   = matchClass === 'exact' ? highlight(text, qTokens) : text;
+  const partNo  = (rec.file || '').substring(0, 3);
+  const srNo    = (text || '').trim().split(/\s+/)[0] || '';
+  const body    = matchClass === 'exact' ? highlight(text, qTokens) : text;
+  // Strip leading zeros from partNo for the PDF filename number
+  const pdfNum  = parseInt(partNo, 10) || partNo;
+  const pdfUrl  = `https://www.eci.gov.in/sir/f2/S13/data/OLDSIRROLL/S13/89/S13_89_${pdfNum}.pdf`;
   return `
   <div class="result-card ${matchClass}">
     <div class="meta-strip">
@@ -367,6 +393,16 @@ function renderCard(rec, text, matchClass, matchLabel, qTokens) {
       <span class="match-badge">${matchLabel}</span>
     </div>
     <div class="name-line">${body}</div>
+    <a class="dl-btn" href="${pdfUrl}" target="_blank" rel="noopener noreferrer">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2.2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      📋 Download Yadi
+    </a>
   </div>`;
 }
 
