@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🗳 मतदार यादी 2002 — SIR Dhule</title>
+<title>🗳 धुळे शहर मतदार यादी 2002 — SIR Dhule</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
@@ -264,8 +264,8 @@ function phoneticKey(devaWord) {
 //   len 7+   → 2 edits
 // ═══════════════════════════════════════════════════════
 function allowedEdits(len) {
-  if (len <= 3) return 0;
-  if (len <= 6) return 1;
+  if (len <= 5) return 0;   // stricter for short names
+  if (len <= 7) return 1;
   return 2;
 }
 
@@ -310,18 +310,37 @@ function levenshtein(a, b) {
 //
 // Upper bound: record skeleton not more than (thresh+1) chars longer.
 // ═══════════════════════════════════════════════════════
-function tokenMatches(qK, recKeys) {
+function tokenMatches(qK, recKeys, isSecondToken = false) {
   if (!qK) return true;
-  const thresh = allowedEdits(qK.length);
+
+  const baseThresh = allowedEdits(qK.length);
+
+  // stricter for second word
+  const thresh = isSecondToken
+    ? Math.max(0, baseThresh - 1)
+    : baseThresh;
+
   for (const rk of recKeys) {
     if (!rk) continue;
-    // ← THE CRITICAL FIX: for queries with 4+ consonant skeleton,
-    //   record words must have skeleton AT LEAST as long as the query.
+
+    // existing lower bound rule
     if (qK.length >= 4 && rk.length < qK.length) continue;
-    // Upper bound: don't match if record word is too much longer
+
+    // existing upper bound
     if (rk.length > qK.length + thresh + 1) continue;
+
+    // ✅ short skeleton must match exactly
+    if (qK.length <= 2) {
+      if (rk !== qK) continue;
+      return true;
+    }
+
+    // ✅ prefix constraint (critical fix)
+    if (!rk.startsWith(qK.slice(0, 2))) continue;
+
     if (levenshtein(qK, rk) <= thresh) return true;
   }
+
   return false;
 }
 
@@ -467,20 +486,20 @@ function search() {
     const recKeys  = recWords.map(phoneticKey);
 
     // Layer 3a: token-by-token phonetic (with length lower-bound fix)
-    if (qKeys.every(qk => tokenMatches(qk, recKeys))) {
-      phoneticList.push({ rec, text, badge: '🔀 ध्वनि-साम्य' });
+    if (qKeys.every((qk, idx) =>       tokenMatches(qk, recKeys, idx === 1) )) {
+      phoneticList.push({ rec, text, badge: '🔀 Similar Name' });
       return;
     }
 
     // Layer 3b: compound long-name skeleton (only for multi-token queries)
     if (longNameMatch(qKeys, recKeys)) {
-      phoneticList.push({ rec, text, badge: '🔀 ध्वनि-साम्य' });
+      phoneticList.push({ rec, text, badge: '🔀 Similar Name' });
     }
   });
 
   let html = '';
   exactList.forEach(({ rec, text }) => {
-    html += renderCard(rec, text, 'exact', '✅ हुबेहूब', qTokens);
+    html += renderCard(rec, text, 'exact', '✅ Exact Name', qTokens);
   });
   phoneticList.forEach(({ rec, text, badge }) => {
     html += renderCard(rec, text, 'fuzzy', badge, qTokens);
@@ -496,7 +515,7 @@ function search() {
      </div>`;
 
   statusEl.innerHTML = total
-    ? `<b>${total}</b> निकाल — ${exactList.length} हुबेहूब, ${phoneticList.length} ध्वनि-साम्य — "<i>${raw}</i>"`
+    ? `<b>${total}</b> निकाल — ${exactList.length} ExactName, ${phoneticList.length} SimilarName — "<i>${raw}</i>"`
     : '';
 }
 
